@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Offline backyard ultra nutrition tracker for a runner's crew.">
+  <title>Backyard Ultra Fuel Tracker</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <style>
+    :root{color-scheme:dark;--bg:#07111f;--panel:#111d2f;--panel2:#17263b;--text:#f8fafc;--muted:#a7b3c5;--green:#22c55e;--blue:#60a5fa;--red:#fb7185;--line:#2a3a50}
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+    button,input,select{font:inherit}.app{max-width:760px;margin:auto;padding:18px 14px 42px}.top{display:flex;justify-content:space-between;gap:10px;align-items:center}.eyebrow{font-size:12px;color:var(--muted);letter-spacing:.12em}.top h1{font-size:23px;margin:3px 0}.badge{background:var(--panel2);padding:10px 13px;border-radius:14px;white-space:nowrap}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}.card{background:var(--panel);padding:14px;border-radius:16px;border:1px solid var(--line)}.label{color:var(--muted);font-size:12px}.value{font-size:24px;font-weight:800;margin-top:4px}
+    h2{font-size:17px;margin:22px 2px 9px}.foods{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.food{border:1px solid var(--line);border-radius:15px;background:var(--panel);color:var(--text);padding:14px;text-align:left;min-height:88px;cursor:pointer}.food:active{transform:scale(.98);background:#1d3150}.food .icon{font-size:24px}.food small{display:block;color:var(--muted);margin-top:4px}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.btn{border:0;border-radius:13px;padding:14px;font-weight:800;cursor:pointer}.primary{background:var(--green);color:#05220f}.secondary{background:#dbeafe;color:#10213f}.danger{background:#3b1c27;color:#fecdd3}.wide{width:100%}
+    details{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px;margin-top:14px}summary{font-weight:750;cursor:pointer}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.field{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:12px}.field input{width:100%;background:#091525;border:1px solid #40516a;color:var(--text);padding:11px;border-radius:10px}.span2{grid-column:1/-1}
+    .toolbar{display:flex;flex-wrap:wrap;gap:8px}.mini{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 11px;cursor:pointer}.log{display:flex;flex-direction:column;gap:8px}.entry{display:flex;justify-content:space-between;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:12px}.meta,.empty{color:var(--muted);font-size:12px}.amount{text-align:right;font-weight:750}.notice{min-height:22px;color:#86efac;text-align:center;font-size:13px;margin-top:8px}.install{display:none;margin:12px 0;background:#1e3a5f;color:white}.foot{color:var(--muted);font-size:12px;margin-top:22px;text-align:center}
+    @media(min-width:620px){.grid{grid-template-columns:repeat(4,1fr)}.foods{grid-template-columns:repeat(3,1fr)}}
+    @media(prefers-color-scheme:light){:root{color-scheme:light;--bg:#eef3f8;--panel:#fff;--panel2:#e4edf7;--text:#102033;--muted:#617086;--line:#d6e0eb}.field input{background:#fff;color:#102033;border-color:#a9b7c8}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <header class="top"><div><div class="eyebrow">BACKYARD ULTRA</div><h1>Crew Fuel Tracker</h1></div><div class="badge">Yard <strong id="yard">1</strong></div></header>
+  <button id="installBtn" class="btn install wide" type="button">Install app</button>
+  <section class="grid" aria-label="Totals">
+    <div class="card"><div class="label">Calories</div><div class="value" id="calories">0</div></div>
+    <div class="card"><div class="label">Fluid</div><div class="value" id="fluid">0 ml</div></div>
+    <div class="card"><div class="label">Carbohydrate</div><div class="value" id="carbs">0 g</div></div>
+    <div class="card"><div class="label">Distance completed</div><div class="value" id="distance">0.00 km</div></div>
+  </section>
+
+  <h2>Quick add</h2><section id="foodGrid" class="foods"></section>
+  <div class="actions"><button id="nextYard" class="btn primary" type="button">🏁 Complete yard</button><button id="undo" class="btn secondary" type="button">↩ Undo last</button></div>
+
+  <details><summary>Add a custom food</summary><form id="foodForm" class="formgrid">
+    <label class="field span2">Name<input id="name" required maxlength="30" placeholder="e.g. Noodles"></label>
+    <label class="field">Icon<input id="icon" maxlength="4" value="🍽️"></label>
+    <label class="field">Calories<input id="foodCalories" type="number" min="0" max="5000" value="100" required></label>
+    <label class="field">Carbohydrate (g)<input id="foodCarbs" type="number" min="0" max="1000" value="20" required></label>
+    <label class="field">Fluid (ml)<input id="foodFluid" type="number" min="0" max="5000" value="0" required></label>
+    <label class="field">Sodium (mg)<input id="foodSodium" type="number" min="0" max="10000" value="0" required></label>
+    <label class="field">Caffeine (mg)<input id="foodCaffeine" type="number" min="0" max="1000" value="0" required></label>
+    <button class="btn primary span2" type="submit">Add quick button</button>
+  </form></details>
+
+  <h2>Data</h2><div class="toolbar"><button id="export" class="mini" type="button">Export backup</button><label class="mini">Import backup<input id="import" type="file" accept="application/json" hidden></label><button id="reset" class="mini danger" type="button">Reset race</button></div>
+  <div id="notice" class="notice" aria-live="polite"></div>
+  <h2>Consumption log</h2><section id="log" class="log"></section>
+  <p class="foot">Data is stored on this device. Export a backup before changing phones or clearing browser data.</p>
+</main>
+<script>
+(()=>{
+const KEY='backyard-ultra-v1';
+const defaults=[
+ {id:'banana',icon:'🍌',name:'Banana',calories:105,carbs:27,fluid:0,sodium:1,caffeine:0},
+ {id:'gel',icon:'⚡',name:'Energy gel',calories:100,carbs:23,fluid:0,sodium:100,caffeine:0},
+ {id:'drink',icon:'🥤',name:'Sports drink',calories:120,carbs:30,fluid:250,sodium:200,caffeine:0},
+ {id:'sandwich',icon:'🥪',name:'Sandwich',calories:250,carbs:35,fluid:0,sodium:450,caffeine:0},
+ {id:'water',icon:'💧',name:'Water',calories:0,carbs:0,fluid:250,sodium:0,caffeine:0},
+ {id:'potato',icon:'🥔',name:'Potatoes',calories:130,carbs:26,fluid:0,sodium:150,caffeine:0}
+];
+let state=load(); let installPrompt=null; const $=s=>document.querySelector(s);
+function fresh(){return{yard:1,foods:defaults,entries:[]}}
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return x&&Array.isArray(x.entries)&&Array.isArray(x.foods)?x:fresh()}catch{return fresh()}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function safeNum(v,max){const n=Number(v);return Number.isFinite(n)?Math.max(0,Math.min(max,Math.round(n))):0}
+function totals(){return state.entries.reduce((a,e)=>{for(const k of ['calories','carbs','fluid','sodium','caffeine'])a[k]+=safeNum(e[k],1e9);return a},{calories:0,carbs:0,fluid:0,sodium:0,caffeine:0})}
+function esc(s){const d=document.createElement('div');d.textContent=String(s);return d.innerHTML}
+function add(food){state.entries.push({...food,yard:state.yard,time:new Date().toISOString()});save();render();note(food.name+' logged ✓')}
+function render(){const t=totals();$('#yard').textContent=state.yard;$('#calories').textContent=t.calories.toLocaleString();$('#fluid').textContent=t.fluid.toLocaleString()+' ml';$('#carbs').textContent=t.carbs.toLocaleString()+' g';$('#distance').textContent=((state.yard-1)*6.706).toFixed(2)+' km';
+ const grid=$('#foodGrid');grid.innerHTML='';state.foods.forEach(f=>{const b=document.createElement('button');b.type='button';b.className='food';b.innerHTML=`<span class="icon">${esc(f.icon)}</span><br><strong>${esc(f.name)}</strong><small>${f.calories} kcal · ${f.carbs} g carbs${f.fluid?' · '+f.fluid+' ml':''}</small>`;b.addEventListener('click',()=>add(f));grid.appendChild(b)});
+ const log=$('#log');log.innerHTML='';if(!state.entries.length){log.innerHTML='<div class="empty">Nothing logged yet.</div>';return}state.entries.slice().reverse().slice(0,100).forEach(e=>{const d=document.createElement('div');d.className='entry';const tm=new Date(e.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});d.innerHTML=`<div><strong>${esc(e.icon)} ${esc(e.name)}</strong><div class="meta">Yard ${e.yard} · ${tm}</div></div><div class="amount">${e.calories} kcal<div class="meta">${e.carbs} g carbs${e.fluid?' · '+e.fluid+' ml':''}</div></div>`;log.appendChild(d)})}
+function note(s){$('#notice').textContent=s;setTimeout(()=>{if($('#notice').textContent===s)$('#notice').textContent=''},1800)}
+$('#nextYard').addEventListener('click',()=>{state.yard++;save();render();note('Yard '+state.yard+' started ✓')});
+$('#undo').addEventListener('click',()=>{if(!state.entries.length)return note('Nothing to undo');const x=state.entries.pop();save();render();note(x.name+' removed')});
+$('#foodForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#name').value.trim();if(!name)return note('Enter a food name');state.foods.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),icon:$('#icon').value.trim()||'🍽️',name,calories:safeNum($('#foodCalories').value,5000),carbs:safeNum($('#foodCarbs').value,1000),fluid:safeNum($('#foodFluid').value,5000),sodium:safeNum($('#foodSodium').value,10000),caffeine:safeNum($('#foodCaffeine').value,1000)});save();render();e.target.reset();$('#icon').value='🍽️';note('Quick button added ✓')});
+$('#export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backyard-ultra-backup.json';a.click();URL.revokeObjectURL(a.href)});
+$('#import').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.entries)||!Array.isArray(x.foods))throw 0;state=x;save();render();note('Backup imported ✓')}catch{note('Invalid backup file')}e.target.value=''});
+$('#reset').addEventListener('click',()=>{if(confirm('Delete this race log and reset to Yard 1?')){state=fresh();save();render();note('Race reset')}});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;$('#installBtn').style.display='block'});$('#installBtn').addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('#installBtn').style.display='none'});
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js'));
+render();
+})();
+</script>
+</body></html>
