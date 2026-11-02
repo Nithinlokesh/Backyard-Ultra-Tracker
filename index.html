@@ -1,391 +1,1085 @@
 <!doctype html>
 <html lang="en">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f172a">
 
-<title>Backyard Ultra Fuel Tracker</title>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icons/icon.svg">
+<meta
+    name="theme-color"
+    content="#0f172a">
+
+<meta
+    name="description"
+    content="Backyard Ultra nutrition and race-note tracker">
+
+<title>
+    Backyard Ultra Fuel Tracker
+</title>
+
+<link
+    rel="manifest"
+    href="manifest.webmanifest">
+
+<link
+    rel="icon"
+    href="icons/icon.svg"
+    type="image/svg+xml">
+
+<link
+    rel="apple-touch-icon"
+    href="icons/icon.svg">
+
 
 <style>
 
 :root {
+
     color-scheme: dark;
 
     --bg: #07111f;
     --panel: #111d2f;
     --panel2: #17263b;
+
     --text: #f8fafc;
     --muted: #a7b3c5;
+
     --green: #22c55e;
+    --blue: #3b82f6;
+    --orange: #f59e0b;
+    --red: #ef4444;
+
     --line: #2a3a50;
+
 }
+
 
 * {
+
     box-sizing: border-box;
+
 }
+
 
 body {
+
     margin: 0;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
+
     background: var(--bg);
+
     color: var(--text);
+
 }
+
 
 button,
-input {
+input,
+textarea {
+
     font: inherit;
+
 }
+
+
+button {
+
+    touch-action: manipulation;
+
+}
+
 
 .app {
+
     max-width: 760px;
+
     margin: auto;
-    padding: 18px 14px 42px;
+
+    padding:
+
+        calc(18px + env(safe-area-inset-top))
+
+        14px
+
+        calc(42px + env(safe-area-inset-bottom));
+
 }
+
 
 .top {
+
     display: flex;
+
     justify-content: space-between;
-    gap: 10px;
+
     align-items: center;
+
+    gap: 10px;
+
 }
+
 
 .eyebrow {
-    font-size: 12px;
+
     color: var(--muted);
-    letter-spacing: .12em;
+
+    font-size: 12px;
+
+    letter-spacing: 0.12em;
+
 }
+
 
 .top h1 {
-    font-size: 23px;
+
     margin: 3px 0;
+
+    font-size: 23px;
+
 }
+
 
 .badge {
-    background: var(--panel2);
+
     padding: 10px 13px;
+
     border-radius: 14px;
+
+    background: var(--panel2);
+
     white-space: nowrap;
+
 }
+
 
 .grid {
+
     display: grid;
-    grid-template-columns: repeat(2,1fr);
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 10px;
+
     margin: 16px 0;
+
 }
+
 
 .card {
-    background: var(--panel);
+
     padding: 14px;
-    border-radius: 16px;
+
     border: 1px solid var(--line);
+
+    border-radius: 16px;
+
+    background: var(--panel);
+
 }
+
 
 .label {
+
     color: var(--muted);
+
     font-size: 12px;
+
 }
+
 
 .value {
-    font-size: 24px;
-    font-weight: 800;
+
     margin-top: 4px;
+
+    font-size: 24px;
+
+    font-weight: 800;
+
 }
+
 
 h2 {
-    font-size: 17px;
+
     margin: 22px 2px 9px;
+
+    font-size: 17px;
+
 }
+
+
+.portion-box {
+
+    padding: 13px;
+
+    margin-bottom: 12px;
+
+    border: 1px solid var(--line);
+
+    border-radius: 15px;
+
+    background: var(--panel);
+
+}
+
+
+.portion-title {
+
+    margin-bottom: 9px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+}
+
+
+.portion-options {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 9px;
+
+}
+
+
+.portion-button {
+
+    padding: 12px;
+
+    border: 1px solid var(--line);
+
+    border-radius: 12px;
+
+    background: var(--panel2);
+
+    color: var(--text);
+
+    cursor: pointer;
+
+    font-weight: 800;
+
+}
+
+
+.portion-button.selected {
+
+    background: var(--green);
+
+    color: #05220f;
+
+    border-color: var(--green);
+
+}
+
 
 .foods {
+
     display: grid;
-    grid-template-columns: repeat(2,1fr);
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 9px;
+
 }
+
 
 .food {
-    border: 1px solid var(--line);
-    border-radius: 15px;
-    background: var(--panel);
-    color: var(--text);
+
+    min-height: 92px;
+
     padding: 14px;
+
+    border: 1px solid var(--line);
+
+    border-radius: 15px;
+
+    background: var(--panel);
+
+    color: var(--text);
+
     text-align: left;
-    min-height: 88px;
+
     cursor: pointer;
+
 }
+
 
 .food:active {
-    transform: scale(.98);
+
+    transform: scale(0.98);
+
     background: #1d3150;
+
 }
+
 
 .food .icon {
+
     font-size: 24px;
+
 }
+
 
 .food small {
+
     display: block;
-    color: var(--muted);
+
     margin-top: 4px;
+
+    color: var(--muted);
+
 }
+
 
 .actions {
+
     display: grid;
-    grid-template-columns: 1fr 1fr;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 9px;
+
     margin-top: 14px;
+
 }
+
 
 .btn {
-    border: 0;
-    border-radius: 13px;
+
     padding: 14px;
+
+    border: 0;
+
+    border-radius: 13px;
+
     font-weight: 800;
+
     cursor: pointer;
+
 }
+
 
 .primary {
+
     background: var(--green);
+
     color: #05220f;
+
 }
+
+
+.note-button {
+
+    background: var(--blue);
+
+    color: white;
+
+}
+
 
 .secondary {
+
     background: #dbeafe;
+
     color: #10213f;
+
 }
+
 
 .danger {
+
     background: #7f1d1d;
+
     color: white;
+
 }
+
 
 details {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 15px;
+
     padding: 13px;
+
     margin-top: 14px;
+
+    border: 1px solid var(--line);
+
+    border-radius: 15px;
+
+    background: var(--panel);
+
 }
+
 
 summary {
+
     font-weight: 750;
+
     cursor: pointer;
+
 }
 
-.formgrid {
+
+.form-grid {
+
     display: grid;
-    grid-template-columns: 1fr 1fr;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 9px;
+
     margin-top: 12px;
+
 }
+
 
 .field {
+
     display: flex;
+
     flex-direction: column;
+
     gap: 5px;
+
     color: var(--muted);
+
     font-size: 12px;
+
 }
 
-.field input {
+
+.field input,
+.field textarea {
+
     width: 100%;
-    background: #091525;
-    border: 1px solid #40516a;
-    color: var(--text);
+
     padding: 11px;
+
+    border: 1px solid #40516a;
+
     border-radius: 10px;
+
+    background: #091525;
+
+    color: var(--text);
+
 }
 
-.span2 {
-    grid-column: 1/-1;
+
+.field textarea {
+
+    min-height: 105px;
+
+    resize: vertical;
+
 }
+
+
+.span-two {
+
+    grid-column: 1 / -1;
+
+}
+
+
+.note-panel {
+
+    display: none;
+
+    padding: 14px;
+
+    margin-top: 12px;
+
+    border: 1px solid var(--blue);
+
+    border-radius: 15px;
+
+    background: var(--panel);
+
+}
+
+
+.note-panel.visible {
+
+    display: block;
+
+}
+
+
+.note-actions {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 9px;
+
+    margin-top: 10px;
+
+}
+
 
 .toolbar {
+
     display: flex;
+
     flex-wrap: wrap;
+
     gap: 8px;
+
 }
+
 
 .mini {
-    background: var(--panel2);
-    color: var(--text);
-    border: 1px solid var(--line);
-    border-radius: 10px;
+
     padding: 9px 11px;
+
+    border: 1px solid var(--line);
+
+    border-radius: 10px;
+
+    background: var(--panel2);
+
+    color: var(--text);
+
     cursor: pointer;
+
 }
+
 
 .log {
+
     display: flex;
+
     flex-direction: column;
+
     gap: 8px;
+
 }
 
+
 .entry {
-    display: flex;
-    justify-content: space-between;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr) auto;
+
     gap: 12px;
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 13px;
+
+    align-items: start;
+
     padding: 12px;
+
+    border: 1px solid var(--line);
+
+    border-radius: 13px;
+
+    background: var(--panel);
+
 }
+
+
+.note-entry {
+
+    border-color: #365d93;
+
+    background: #10233d;
+
+}
+
+
+.entry-title {
+
+    overflow-wrap: anywhere;
+
+}
+
 
 .meta,
 .empty {
+
+    margin-top: 3px;
+
     color: var(--muted);
+
     font-size: 12px;
+
 }
+
 
 .amount {
+
     text-align: right;
+
     font-weight: 750;
+
 }
+
+
+.entry-buttons {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: 8px;
+
+}
+
+
+.delete-entry {
+
+    padding: 7px 9px;
+
+    border: 1px solid #7f1d1d;
+
+    border-radius: 9px;
+
+    background: #3b151d;
+
+    color: #fecdd3;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+}
+
 
 .notice {
+
     min-height: 22px;
-    color: #86efac;
-    text-align: center;
-    font-size: 13px;
+
     margin-top: 8px;
+
+    color: #86efac;
+
+    text-align: center;
+
+    font-size: 13px;
+
 }
+
+
+.corrections {
+
+    padding: 14px;
+
+    margin-top: 30px;
+
+    border: 1px solid #835d24;
+
+    border-radius: 15px;
+
+    background: #2a2113;
+
+}
+
+
+.corrections-title {
+
+    margin: 0 0 5px;
+
+    font-weight: 800;
+
+}
+
+
+.corrections-text {
+
+    margin: 0 0 12px;
+
+    color: #d6c7aa;
+
+    font-size: 12px;
+
+}
+
+
+.undo-bottom {
+
+    width: 100%;
+
+    background: #f3e8cc;
+
+    color: #33240c;
+
+}
+
 
 .foot {
-    color: var(--muted);
-    font-size: 12px;
+
     margin-top: 22px;
+
+    color: var(--muted);
+
     text-align: center;
+
+    font-size: 12px;
+
 }
 
-@media(min-width:620px) {
+
+@media (min-width: 620px) {
 
     .grid {
-        grid-template-columns: repeat(4,1fr);
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
     }
+
 
     .foods {
-        grid-template-columns: repeat(3,1fr);
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
     }
+
 }
 
-@media(prefers-color-scheme:light) {
+
+@media (prefers-color-scheme: light) {
 
     :root {
+
         color-scheme: light;
+
         --bg: #eef3f8;
         --panel: #ffffff;
         --panel2: #e4edf7;
+
         --text: #102033;
         --muted: #617086;
+
         --line: #d6e0eb;
+
     }
 
-    .field input {
-        background: #ffffff;
+
+    .field input,
+    .field textarea {
+
+        background: white;
+
         color: #102033;
+
     }
+
+
+    .note-entry {
+
+        background: #edf6ff;
+
+    }
+
+
+    .corrections {
+
+        background: #fff8e8;
+
+    }
+
+
+    .corrections-text {
+
+        color: #6f5a2a;
+
+    }
+
 }
 
 </style>
+
 </head>
+
 
 <body>
 
 <main class="app">
 
+
 <header class="top">
 
     <div>
+
         <div class="eyebrow">
+
             BACKYARD ULTRA
+
         </div>
 
         <h1>
+
             Crew Fuel Tracker
+
         </h1>
+
     </div>
 
+
     <div class="badge">
-        Yard <strong id="yard">1</strong>
+
+        Yard
+
+        <strong id="yard">
+
+            1
+
+        </strong>
+
     </div>
 
 </header>
 
 
-<section class="grid">
+<section
+    class="grid"
+    aria-label="Race totals">
+
 
     <div class="card">
-        <div class="label">Calories</div>
-        <div class="value" id="calories">0</div>
+
+        <div class="label">
+
+            Calories
+
+        </div>
+
+        <div
+            class="value"
+            id="calories">
+
+            0
+
+        </div>
+
     </div>
 
-    <div class="card">
-        <div class="label">Fluid</div>
-        <div class="value" id="fluid">0 ml</div>
-    </div>
 
     <div class="card">
-        <div class="label">Carbohydrate</div>
-        <div class="value" id="carbs">0 g</div>
+
+        <div class="label">
+
+            Fluid
+
+        </div>
+
+        <div
+            class="value"
+            id="fluid">
+
+            0 ml
+
+        </div>
+
     </div>
 
+
     <div class="card">
-        <div class="label">Distance completed</div>
-        <div class="value" id="distance">0.00 km</div>
+
+        <div class="label">
+
+            Carbohydrate
+
+        </div>
+
+        <div
+            class="value"
+            id="carbs">
+
+            0 g
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="label">
+
+            Distance completed
+
+        </div>
+
+        <div
+            class="value"
+            id="distance">
+
+            0.00 km
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+<h2>
+
+    Quick add
+
+</h2>
+
+
+<section class="portion-box">
+
+    <div class="portion-title">
+
+        Select the amount consumed
+
+    </div>
+
+
+    <div class="portion-options">
+
+        <button
+            id="fullPortion"
+            class="portion-button selected"
+            type="button">
+
+            ✓ Full portion
+
+        </button>
+
+
+        <button
+            id="halfPortion"
+            class="portion-button"
+            type="button">
+
+            ½ Half portion
+
+        </button>
+
     </div>
 
 </section>
 
 
-<h2>Quick add</h2>
+<section
+    id="foodGrid"
+    class="foods">
 
-<section id="foodGrid" class="foods"></section>
+</section>
 
 
 <div class="actions">
 
-    <button id="nextYard"
-            class="btn primary"
-            type="button">
+
+    <button
+        id="nextYard"
+        class="btn primary"
+        type="button">
 
         🏁 Complete yard
 
     </button>
 
-    <button id="undo"
-            class="btn secondary"
-            type="button">
 
-        ↩ Undo last
+    <button
+        id="showNote"
+        class="btn note-button"
+        type="button">
+
+        📝 Add note
 
     </button>
+
 
 </div>
 
 
+<section
+    id="notePanel"
+    class="note-panel">
+
+
+    <label class="field">
+
+        Race note
+
+        <textarea
+            id="noteText"
+            maxlength="500"
+            placeholder="For example: stomach discomfort, changed socks, only ate a few bites, feeling cold..."></textarea>
+
+    </label>
+
+
+    <div class="note-actions">
+
+        <button
+            id="saveNote"
+            class="btn note-button"
+            type="button">
+
+            Save note
+
+        </button>
+
+
+        <button
+            id="cancelNote"
+            class="btn secondary"
+            type="button">
+
+            Cancel
+
+        </button>
+
+    </div>
+
+
+</section>
+
+
 <details>
 
+
 <summary>
+
     ➕ Add a custom food
+
 </summary>
 
-<form id="foodForm"
-      class="formgrid">
 
-    <label class="field span2">
+<form
+    id="foodForm"
+    class="form-grid">
 
-        Name
+
+    <label class="field span-two">
+
+        Food name
 
         <input
-        id="name"
-        required
-        maxlength="30"
-        placeholder="e.g. Pizza">
+            id="name"
+            required
+            maxlength="40"
+            placeholder="For example: Pizza">
 
     </label>
 
@@ -395,9 +1089,9 @@ summary {
         Icon
 
         <input
-        id="icon"
-        maxlength="4"
-        value="🍽️">
+            id="icon"
+            maxlength="4"
+            value="🍽️">
 
     </label>
 
@@ -407,12 +1101,13 @@ summary {
         Calories
 
         <input
-        id="foodCalories"
-        type="number"
-        min="0"
-        max="5000"
-        value="100"
-        required>
+            id="foodCalories"
+            type="number"
+            min="0"
+            max="5000"
+            step="0.1"
+            value="100"
+            required>
 
     </label>
 
@@ -422,12 +1117,13 @@ summary {
         Carbohydrate (g)
 
         <input
-        id="foodCarbs"
-        type="number"
-        min="0"
-        max="1000"
-        value="20"
-        required>
+            id="foodCarbs"
+            type="number"
+            min="0"
+            max="1000"
+            step="0.1"
+            value="20"
+            required>
 
     </label>
 
@@ -437,88 +1133,138 @@ summary {
         Fluid (ml)
 
         <input
-        id="foodFluid"
-        type="number"
-        min="0"
-        max="5000"
-        value="0"
-        required>
+            id="foodFluid"
+            type="number"
+            min="0"
+            max="5000"
+            step="1"
+            value="0"
+            required>
 
     </label>
 
 
     <button
-    class="btn primary span2"
-    type="submit">
+        class="btn primary span-two"
+        type="submit">
 
         Add quick button
 
     </button>
 
+
 </form>
+
 
 </details>
 
 
-<h2>Data</h2>
+<h2>
+
+    Data
+
+</h2>
+
 
 <div class="toolbar">
 
-<button
-id="export"
-class="mini"
-type="button">
 
-    Export backup
+    <button
+        id="export"
+        class="mini"
+        type="button">
 
-</button>
+        Export backup
 
-
-<label class="mini">
-
-    Import backup
-
-    <input
-    id="import"
-    type="file"
-    accept="application/json"
-    hidden>
-
-</label>
+    </button>
 
 
-<button
-id="reset"
-class="mini danger"
-type="button">
+    <label class="mini">
 
-    Reset race
+        Import backup
 
-</button>
+        <input
+            id="import"
+            type="file"
+            accept="application/json"
+            hidden>
+
+    </label>
+
+
+    <button
+        id="reset"
+        class="mini danger"
+        type="button">
+
+        Reset race
+
+    </button>
+
 
 </div>
 
 
 <div
-id="notice"
-class="notice"
-aria-live="polite">
+    id="notice"
+    class="notice"
+    aria-live="polite">
+
 </div>
 
 
-<h2>Consumption log</h2>
+<h2>
+
+    Consumption and race log
+
+</h2>
+
 
 <section
-id="log"
-class="log">
+    id="log"
+    class="log">
+
+</section>
+
+
+<section class="corrections">
+
+
+    <p class="corrections-title">
+
+        ⚠️ Corrections
+
+    </p>
+
+
+    <p class="corrections-text">
+
+        Undo removes the most recent food or note.
+        Use the delete button in the log to remove a particular item.
+
+    </p>
+
+
+    <button
+        id="undo"
+        class="btn undo-bottom"
+        type="button">
+
+        ↩ Undo last entry
+
+    </button>
+
+
 </section>
 
 
 <p class="foot">
 
-Data is stored on this device.
+    Data is stored on this device.
+    Export a backup before clearing browser data or changing phones.
 
 </p>
+
 
 </main>
 
@@ -527,128 +1273,160 @@ Data is stored on this device.
 
 (function () {
 
-const KEY = "backyard-ultra-v2";
+
+const STORAGE_KEY =
+    "backyard-ultra-v2";
 
 
-const defaults = [
+const defaultFoods = [
 
-{
-id:"banana",
-icon:"🍌",
-name:"Banana",
-calories:105,
-carbs:27,
-fluid:0
-},
 
-{
-id:"gel",
-icon:"⚡",
-name:"Energy gel",
-calories:100,
-carbs:23,
-fluid:0
-},
+    {
+        id: "banana",
+        icon: "🍌",
+        name: "Banana",
+        calories: 105,
+        carbs: 27,
+        fluid: 0
+    },
 
-{
-id:"drink",
-icon:"🥤",
-name:"Sports drink",
-calories:120,
-carbs:30,
-fluid:250
-},
 
-{
-id:"water",
-icon:"💧",
-name:"Water",
-calories:0,
-carbs:0,
-fluid:250
-},
+    {
+        id: "gel",
+        icon: "⚡",
+        name: "Energy gel",
+        calories: 100,
+        carbs: 23,
+        fluid: 0
+    },
 
-{
-id:"cheese-pb",
-icon:"🥪",
-name:"Cheese + PB sandwich",
-calories:350,
-carbs:35,
-fluid:0
-},
 
-{
-id:"nutella",
-icon:"🍫",
-name:"Nutella sandwich",
-calories:320,
-carbs:45,
-fluid:0
-},
+    {
+        id: "drink",
+        icon: "🥤",
+        name: "Sports drink",
+        calories: 120,
+        carbs: 30,
+        fluid: 250
+    },
 
-{
-id:"jam",
-icon:"🍓",
-name:"Jam sandwich",
-calories:240,
-carbs:50,
-fluid:0
-},
 
-{
-id:"banana-pb",
-icon:"🍌",
-name:"Banana + PB sandwich",
-calories:285,
-carbs:39,
-fluid:0
-},
+    {
+        id: "water",
+        icon: "💧",
+        name: "Water",
+        calories: 0,
+        carbs: 0,
+        fluid: 250
+    },
 
-{
-id:"mashed-potato",
-icon:"🥔",
-name:"Mashed potatoes",
-calories:220,
-carbs:35,
-fluid:0
-},
 
-{
-id:"baby-food",
-icon:"👶",
-name:"Baby food",
-calories:70,
-carbs:16,
-fluid:0
-},
+    {
+        id: "cheese-pb",
+        icon: "🥪",
+        name: "Cheese + PB sandwich",
+        calories: 350,
+        carbs: 35,
+        fluid: 0
+    },
 
-{
-id:"ramen",
-icon:"🍜",
-name:"Ramen noodles",
-calories:380,
-carbs:52,
-fluid:0
-},
 
-{
-id:"bone-broth",
-icon:"🥣",
-name:"Bone broth",
-calories:40,
-carbs:1,
-fluid:250
-}
+    {
+        id: "nutella",
+        icon: "🍫",
+        name: "Nutella sandwich",
+        calories: 320,
+        carbs: 45,
+        fluid: 0
+    },
+
+
+    {
+        id: "jam",
+        icon: "🍓",
+        name: "Jam sandwich",
+        calories: 240,
+        carbs: 50,
+        fluid: 0
+    },
+
+
+    {
+        id: "banana-pb",
+        icon: "🍌",
+        name: "Banana + PB sandwich",
+        calories: 285,
+        carbs: 39,
+        fluid: 0
+    },
+
+
+    {
+        id: "mashed-potato",
+        icon: "🥔",
+        name: "Mashed potatoes",
+        calories: 220,
+        carbs: 35,
+        fluid: 0
+    },
+
+
+    {
+        id: "baby-food",
+        icon: "👶",
+        name: "Baby food",
+        calories: 70,
+        carbs: 16,
+        fluid: 0
+    },
+
+
+    {
+        id: "ramen",
+        icon: "🍜",
+        name: "Ramen noodles",
+        calories: 380,
+        carbs: 52,
+        fluid: 0
+    },
+
+
+    {
+        id: "bone-broth",
+        icon: "🥣",
+        name: "Bone broth",
+        calories: 40,
+        carbs: 1,
+        fluid: 250
+    }
+
 
 ];
 
 
-function freshState() {
+let selectedPortion = 1;
+
+
+function copyDefaultFoods() {
+
+    return JSON.parse(
+        JSON.stringify(defaultFoods)
+    );
+
+}
+
+
+function createFreshState() {
 
     return {
+
         yard: 1,
-        foods: JSON.parse(JSON.stringify(defaults)),
+
+        foods:
+            copyDefaultFoods(),
+
         entries: []
+
     };
 
 }
@@ -658,67 +1436,164 @@ function loadState() {
 
     try {
 
-        const saved =
-            localStorage.getItem(KEY);
+        const savedData =
+            localStorage.getItem(
+                STORAGE_KEY
+            );
 
-        if (!saved) {
-            return freshState();
+
+        if (!savedData) {
+
+            return createFreshState();
+
         }
 
-        const parsed =
-            JSON.parse(saved);
+
+        const parsedData =
+            JSON.parse(savedData);
+
 
         if (
-            !parsed ||
-            !Array.isArray(parsed.foods) ||
-            !Array.isArray(parsed.entries)
+            !parsedData ||
+            !Array.isArray(parsedData.foods) ||
+            !Array.isArray(parsedData.entries)
         ) {
-            return freshState();
+
+            return createFreshState();
+
         }
 
-        return parsed;
+
+        if (
+            !Number.isFinite(
+                Number(parsedData.yard)
+            )
+        ) {
+
+            parsedData.yard = 1;
+
+        }
+
+
+        return parsedData;
 
     }
     catch (error) {
 
-        return freshState();
+        return createFreshState();
 
     }
 
 }
 
 
-let state = loadState();
+let state =
+    loadState();
 
 
 function saveState() {
 
     localStorage.setItem(
-        KEY,
+
+        STORAGE_KEY,
+
         JSON.stringify(state)
+
     );
 
 }
 
 
-function totalValues() {
+function makeEntryId() {
+
+    return (
+
+        "entry-" +
+
+        Date.now() +
+
+        "-" +
+
+        Math.floor(
+            Math.random() * 1000000
+        )
+
+    );
+
+}
+
+
+function formatNumber(value) {
+
+    const number =
+        Number(value) || 0;
+
+
+    if (
+        Math.abs(
+            number -
+            Math.round(number)
+        ) < 0.001
+    ) {
+
+        return String(
+            Math.round(number)
+        );
+
+    }
+
+
+    return number.toFixed(1);
+
+}
+
+
+function calculateTotals() {
 
     let calories = 0;
+
     let carbs = 0;
+
     let fluid = 0;
 
-    state.entries.forEach(function(entry) {
 
-        calories += Number(entry.calories) || 0;
-        carbs += Number(entry.carbs) || 0;
-        fluid += Number(entry.fluid) || 0;
+    state.entries.forEach(
+        function (entry) {
 
-    });
+
+            if (
+                entry.type === "note"
+            ) {
+
+                return;
+
+            }
+
+
+            calories +=
+                Number(entry.calories) || 0;
+
+
+            carbs +=
+                Number(entry.carbs) || 0;
+
+
+            fluid +=
+                Number(entry.fluid) || 0;
+
+
+        }
+    );
+
 
     return {
+
         calories: calories,
+
         carbs: carbs,
+
         fluid: fluid
+
     };
 
 }
@@ -727,29 +1602,138 @@ function totalValues() {
 function showNotice(message) {
 
     const notice =
-        document.getElementById("notice");
+        document.getElementById(
+            "notice"
+        );
 
-    notice.textContent = message;
+
+    notice.textContent =
+        message;
+
+
+    window.setTimeout(
+
+        function () {
+
+
+            if (
+                notice.textContent ===
+                message
+            ) {
+
+                notice.textContent = "";
+
+            }
+
+
+        },
+
+        2500
+
+    );
+
+}
+
+
+function selectPortion(portion) {
+
+    selectedPortion =
+        portion;
+
+
+    const fullButton =
+        document.getElementById(
+            "fullPortion"
+        );
+
+
+    const halfButton =
+        document.getElementById(
+            "halfPortion"
+        );
+
+
+    if (portion === 0.5) {
+
+        fullButton.classList.remove(
+            "selected"
+        );
+
+
+        halfButton.classList.add(
+            "selected"
+        );
+
+    }
+    else {
+
+        halfButton.classList.remove(
+            "selected"
+        );
+
+
+        fullButton.classList.add(
+            "selected"
+        );
+
+    }
 
 }
 
 
 function addFood(food) {
 
-    state.entries.push({
+    const portion =
+        selectedPortion;
 
-        id: food.id,
-        icon: food.icon,
-        name: food.name,
+
+    let displayName =
+        food.name;
+
+
+    if (portion === 0.5) {
+
+        displayName =
+            "½ " +
+            food.name;
+
+    }
+
+
+    const entry = {
+
+        entryId:
+            makeEntryId(),
+
+        type:
+            "food",
+
+        foodId:
+            food.id,
+
+        icon:
+            food.icon,
+
+        name:
+            displayName,
+
+        originalName:
+            food.name,
+
+        portion:
+            portion,
 
         calories:
-            Number(food.calories) || 0,
+            Number(food.calories || 0) *
+            portion,
 
         carbs:
-            Number(food.carbs) || 0,
+            Number(food.carbs || 0) *
+            portion,
 
         fluid:
-            Number(food.fluid) || 0,
+            Number(food.fluid || 0) *
+            portion,
 
         yard:
             state.yard,
@@ -757,15 +1741,246 @@ function addFood(food) {
         time:
             new Date().toISOString()
 
-    });
+    };
+
+
+    state.entries.push(entry);
+
 
     saveState();
 
+
+    selectPortion(1);
+
+
     render();
 
+
     showNotice(
-        food.name + " logged ✓"
+
+        displayName +
+        " logged ✓"
+
     );
+
+}
+
+
+function addNote() {
+
+    const noteInput =
+        document.getElementById(
+            "noteText"
+        );
+
+
+    const note =
+        noteInput.value.trim();
+
+
+    if (!note) {
+
+        showNotice(
+            "Please enter a note"
+        );
+
+        noteInput.focus();
+
+        return;
+
+    }
+
+
+    const entry = {
+
+        entryId:
+            makeEntryId(),
+
+        type:
+            "note",
+
+        icon:
+            "📝",
+
+        name:
+            note,
+
+        calories:
+            0,
+
+        carbs:
+            0,
+
+        fluid:
+            0,
+
+        yard:
+            state.yard,
+
+        time:
+            new Date().toISOString()
+
+    };
+
+
+    state.entries.push(entry);
+
+
+    noteInput.value = "";
+
+
+    document
+        .getElementById("notePanel")
+        .classList
+        .remove("visible");
+
+
+    saveState();
+
+
+    render();
+
+
+    showNotice(
+        "Race note saved ✓"
+    );
+
+}
+
+
+function deleteEntry(entryId) {
+
+    let entryToDelete = null;
+
+
+    state.entries.forEach(
+        function (entry) {
+
+
+            if (
+                entry.entryId ===
+                entryId
+            ) {
+
+                entryToDelete =
+                    entry;
+
+            }
+
+
+        }
+    );
+
+
+    if (!entryToDelete) {
+
+        return;
+
+    }
+
+
+    const description =
+
+        entryToDelete.type === "note"
+
+        ? "this note"
+
+        : entryToDelete.name;
+
+
+    const confirmed =
+        window.confirm(
+
+            "Delete " +
+            description +
+            " from the log?"
+
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    state.entries =
+        state.entries.filter(
+
+            function (entry) {
+
+                return (
+                    entry.entryId !==
+                    entryId
+                );
+
+            }
+
+        );
+
+
+    saveState();
+
+
+    render();
+
+
+    showNotice(
+        "Entry deleted ✓"
+    );
+
+}
+
+
+function normaliseExistingEntries() {
+
+    let changed = false;
+
+
+    state.entries.forEach(
+        function (entry) {
+
+
+            if (!entry.entryId) {
+
+                entry.entryId =
+                    makeEntryId();
+
+                changed = true;
+
+            }
+
+
+            if (!entry.type) {
+
+                entry.type =
+                    "food";
+
+                changed = true;
+
+            }
+
+
+            if (!entry.portion) {
+
+                entry.portion =
+                    1;
+
+                changed = true;
+
+            }
+
+
+        }
+    );
+
+
+    if (changed) {
+
+        saveState();
+
+    }
 
 }
 
@@ -773,81 +1988,138 @@ function addFood(food) {
 function renderFoodButtons() {
 
     const container =
-        document.getElementById("foodGrid");
+        document.getElementById(
+            "foodGrid"
+        );
+
 
     container.innerHTML = "";
 
 
-    state.foods.forEach(function(food) {
-
-        const button =
-            document.createElement("button");
-
-        button.type = "button";
-
-        button.className = "food";
+    state.foods.forEach(
+        function (food) {
 
 
-        const icon =
-            document.createElement("span");
-
-        icon.className = "icon";
-
-        icon.textContent = food.icon;
+            const button =
+                document.createElement(
+                    "button"
+                );
 
 
-        const name =
-            document.createElement("strong");
-
-        name.textContent =
-            food.name;
+            button.type =
+                "button";
 
 
-        const nutrition =
-            document.createElement("small");
-
-        let text =
-            food.calories +
-            " kcal • " +
-            food.carbs +
-            " g carbs";
-
-        if (food.fluid > 0) {
-
-            text +=
-                " • " +
-                food.fluid +
-                " ml";
-
-        }
-
-        nutrition.textContent = text;
+            button.className =
+                "food";
 
 
-        button.appendChild(icon);
-
-        button.appendChild(
-            document.createElement("br")
-        );
-
-        button.appendChild(name);
-
-        button.appendChild(nutrition);
+            const icon =
+                document.createElement(
+                    "span"
+                );
 
 
-        button.addEventListener(
-            "click",
-            function () {
+            icon.className =
+                "icon";
 
-                addFood(food);
+
+            icon.textContent =
+                food.icon;
+
+
+            const name =
+                document.createElement(
+                    "strong"
+                );
+
+
+            name.textContent =
+                food.name;
+
+
+            const nutrition =
+                document.createElement(
+                    "small"
+                );
+
+
+            let nutritionText =
+
+                formatNumber(
+                    food.calories
+                ) +
+
+                " kcal • " +
+
+                formatNumber(
+                    food.carbs
+                ) +
+
+                " g carbs";
+
+
+            if (
+                Number(food.fluid) > 0
+            ) {
+
+                nutritionText +=
+
+                    " • " +
+
+                    formatNumber(
+                        food.fluid
+                    ) +
+
+                    " ml";
 
             }
-        );
 
 
-        container.appendChild(button);
+            nutrition.textContent =
+                nutritionText;
 
-    });
+
+            button.appendChild(icon);
+
+
+            button.appendChild(
+
+                document.createElement(
+                    "br"
+                )
+
+            );
+
+
+            button.appendChild(name);
+
+
+            button.appendChild(
+                nutrition
+            );
+
+
+            button.addEventListener(
+
+                "click",
+
+                function () {
+
+                    addFood(food);
+
+                }
+
+            );
+
+
+            container.appendChild(
+                button
+            );
+
+
+        }
+    );
 
 }
 
@@ -855,129 +2127,310 @@ function renderFoodButtons() {
 function renderLog() {
 
     const log =
-        document.getElementById("log");
+        document.getElementById(
+            "log"
+        );
+
 
     log.innerHTML = "";
 
 
-    if (state.entries.length === 0) {
+    if (
+        state.entries.length === 0
+    ) {
 
         const empty =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        empty.className = "empty";
+
+        empty.className =
+            "empty";
+
 
         empty.textContent =
             "Nothing logged yet.";
 
-        log.appendChild(empty);
+
+        log.appendChild(
+            empty
+        );
+
 
         return;
 
     }
 
 
-    const reversed =
+    const reversedEntries =
         state.entries
-        .slice()
-        .reverse();
+            .slice()
+            .reverse();
 
 
-    reversed.forEach(function(entry) {
-
-        const row =
-            document.createElement("div");
-
-        row.className = "entry";
+    reversedEntries.forEach(
+        function (entry) {
 
 
-        const left =
-            document.createElement("div");
+            const row =
+                document.createElement(
+                    "article"
+                );
 
 
-        const title =
-            document.createElement("strong");
-
-        title.textContent =
-            entry.icon +
-            " " +
-            entry.name;
+            row.className =
+                "entry";
 
 
-        const time =
-            document.createElement("div");
+            if (
+                entry.type === "note"
+            ) {
 
-        time.className = "meta";
+                row.classList.add(
+                    "note-entry"
+                );
+
+            }
 
 
-        const date =
-            new Date(entry.time);
+            const left =
+                document.createElement(
+                    "div"
+                );
 
 
-        time.textContent =
-            "Yard " +
-            entry.yard +
-            " • " +
-            date.toLocaleTimeString(
-                [],
-                {
-                    hour:"2-digit",
-                    minute:"2-digit"
-                }
+            const title =
+                document.createElement(
+                    "strong"
+                );
+
+
+            title.className =
+                "entry-title";
+
+
+            if (
+                entry.type === "note"
+            ) {
+
+                title.textContent =
+
+                    "📝 " +
+                    entry.name;
+
+            }
+            else {
+
+                title.textContent =
+
+                    entry.icon +
+                    " " +
+                    entry.name;
+
+            }
+
+
+            const details =
+                document.createElement(
+                    "div"
+                );
+
+
+            details.className =
+                "meta";
+
+
+            const date =
+                new Date(entry.time);
+
+
+            details.textContent =
+
+                "Yard " +
+
+                entry.yard +
+
+                " • " +
+
+                date.toLocaleTimeString(
+
+                    [],
+
+                    {
+
+                        hour:
+                            "2-digit",
+
+                        minute:
+                            "2-digit"
+
+                    }
+
+                );
+
+
+            left.appendChild(
+                title
             );
 
 
-        left.appendChild(title);
-
-        left.appendChild(time);
-
-
-        const right =
-            document.createElement("div");
-
-        right.className = "amount";
+            left.appendChild(
+                details
+            );
 
 
-        right.textContent =
-            entry.calories +
-            " kcal";
+            const right =
+                document.createElement(
+                    "div"
+                );
 
 
-        const nutrition =
-            document.createElement("div");
-
-        nutrition.className = "meta";
+            right.className =
+                "amount";
 
 
-        let text =
-            entry.carbs +
-            " g carbs";
+            if (
+                entry.type !== "note"
+            ) {
+
+                const calorieText =
+                    document.createElement(
+                        "div"
+                    );
 
 
-        if (entry.fluid > 0) {
+                calorieText.textContent =
 
-            text +=
-                " • " +
-                entry.fluid +
-                " ml";
+                    formatNumber(
+                        entry.calories
+                    ) +
+
+                    " kcal";
+
+
+                right.appendChild(
+                    calorieText
+                );
+
+
+                const nutrition =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                nutrition.className =
+                    "meta";
+
+
+                let nutritionText =
+
+                    formatNumber(
+                        entry.carbs
+                    ) +
+
+                    " g carbs";
+
+
+                if (
+                    Number(entry.fluid) > 0
+                ) {
+
+                    nutritionText +=
+
+                        " • " +
+
+                        formatNumber(
+                            entry.fluid
+                        ) +
+
+                        " ml";
+
+                }
+
+
+                nutrition.textContent =
+                    nutritionText;
+
+
+                right.appendChild(
+                    nutrition
+                );
+
+            }
+
+
+            const buttonArea =
+                document.createElement(
+                    "div"
+                );
+
+
+            buttonArea.className =
+                "entry-buttons";
+
+
+            const deleteButton =
+                document.createElement(
+                    "button"
+                );
+
+
+            deleteButton.type =
+                "button";
+
+
+            deleteButton.className =
+                "delete-entry";
+
+
+            deleteButton.textContent =
+                "🗑 Delete";
+
+
+            deleteButton.addEventListener(
+
+                "click",
+
+                function () {
+
+                    deleteEntry(
+                        entry.entryId
+                    );
+
+                }
+
+            );
+
+
+            buttonArea.appendChild(
+                deleteButton
+            );
+
+
+            right.appendChild(
+                buttonArea
+            );
+
+
+            row.appendChild(
+                left
+            );
+
+
+            row.appendChild(
+                right
+            );
+
+
+            log.appendChild(
+                row
+            );
+
 
         }
-
-
-        nutrition.textContent = text;
-
-
-        right.appendChild(nutrition);
-
-
-        row.appendChild(left);
-
-        row.appendChild(right);
-
-
-        log.appendChild(row);
-
-    });
+    );
 
 }
 
@@ -985,39 +2438,52 @@ function renderLog() {
 function render() {
 
     const totals =
-        totalValues();
+        calculateTotals();
 
 
     document
-    .getElementById("yard")
-    .textContent =
-        state.yard;
+        .getElementById("yard")
+        .textContent =
+            state.yard;
 
 
     document
-    .getElementById("calories")
-    .textContent =
-        totals.calories;
+        .getElementById("calories")
+        .textContent =
+            formatNumber(
+                totals.calories
+            );
 
 
     document
-    .getElementById("carbs")
-    .textContent =
-        totals.carbs +
-        " g";
+        .getElementById("carbs")
+        .textContent =
+
+            formatNumber(
+                totals.carbs
+            ) +
+
+            " g";
 
 
     document
-    .getElementById("fluid")
-    .textContent =
-        totals.fluid +
-        " ml";
+        .getElementById("fluid")
+        .textContent =
+
+            formatNumber(
+                totals.fluid
+            ) +
+
+            " ml";
 
 
     const completedYards =
         Math.max(
+
             0,
-            state.yard - 1
+
+            Number(state.yard) - 1
+
         );
 
 
@@ -1027,13 +2493,16 @@ function render() {
 
 
     document
-    .getElementById("distance")
-    .textContent =
-        distance.toFixed(2) +
-        " km";
+        .getElementById("distance")
+        .textContent =
+
+            distance.toFixed(2) +
+
+            " km";
 
 
     renderFoodButtons();
+
 
     renderLog();
 
@@ -1041,368 +2510,636 @@ function render() {
 
 
 document
-.getElementById("nextYard")
-.addEventListener(
-    "click",
-    function () {
+    .getElementById("fullPortion")
+    .addEventListener(
 
-        state.yard++;
+        "click",
 
-        saveState();
+        function () {
 
-        render();
-
-        showNotice(
-            "Yard " +
-            state.yard +
-            " started ✓"
-        );
-
-    }
-);
-
-
-document
-.getElementById("undo")
-.addEventListener(
-    "click",
-    function () {
-
-        if (
-            state.entries.length === 0
-        ) {
-
-            showNotice(
-                "Nothing to undo"
-            );
-
-            return;
+            selectPortion(1);
 
         }
 
+    );
 
-        const removed =
+
+document
+    .getElementById("halfPortion")
+    .addEventListener(
+
+        "click",
+
+        function () {
+
+            selectPortion(0.5);
+
+        }
+
+    );
+
+
+document
+    .getElementById("nextYard")
+    .addEventListener(
+
+        "click",
+
+        function () {
+
+
+            state.yard++;
+
+
+            saveState();
+
+
+            render();
+
+
+            showNotice(
+
+                "Yard " +
+
+                state.yard +
+
+                " started ✓"
+
+            );
+
+
+        }
+
+    );
+
+
+document
+    .getElementById("showNote")
+    .addEventListener(
+
+        "click",
+
+        function () {
+
+
+            const notePanel =
+                document.getElementById(
+                    "notePanel"
+                );
+
+
+            notePanel.classList.add(
+                "visible"
+            );
+
+
+            document
+                .getElementById(
+                    "noteText"
+                )
+                .focus();
+
+
+        }
+
+    );
+
+
+document
+    .getElementById("saveNote")
+    .addEventListener(
+
+        "click",
+
+        function () {
+
+            addNote();
+
+        }
+
+    );
+
+
+document
+    .getElementById("cancelNote")
+    .addEventListener(
+
+        "click",
+
+        function () {
+
+
+            document
+                .getElementById(
+                    "noteText"
+                )
+                .value = "";
+
+
+            document
+                .getElementById(
+                    "notePanel"
+                )
+                .classList
+                .remove("visible");
+
+
+        }
+
+    );
+
+
+document
+    .getElementById("undo")
+    .addEventListener(
+
+        "click",
+
+        function () {
+
+
+            if (
+                state.entries.length === 0
+            ) {
+
+                showNotice(
+                    "Nothing to undo"
+                );
+
+                return;
+
+            }
+
+
+            const lastEntry =
+                state.entries[
+                    state.entries.length - 1
+                ];
+
+
+            const description =
+
+                lastEntry.type === "note"
+
+                ? "the latest note"
+
+                : lastEntry.name;
+
+
+            const confirmed =
+                window.confirm(
+
+                    "Undo " +
+                    description +
+                    "?"
+
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
             state.entries.pop();
 
 
-        saveState();
-
-        render();
+            saveState();
 
 
-        showNotice(
-            removed.name +
-            " removed"
-        );
+            render();
 
-    }
-);
-
-
-document
-.getElementById("foodForm")
-.addEventListener(
-    "submit",
-    function (event) {
-
-        event.preventDefault();
-
-
-        const name =
-            document
-            .getElementById("name")
-            .value
-            .trim();
-
-
-        const icon =
-            document
-            .getElementById("icon")
-            .value
-            .trim() || "🍽️";
-
-
-        const calories =
-            Number(
-                document
-                .getElementById("foodCalories")
-                .value
-            ) || 0;
-
-
-        const carbs =
-            Number(
-                document
-                .getElementById("foodCarbs")
-                .value
-            ) || 0;
-
-
-        const fluid =
-            Number(
-                document
-                .getElementById("foodFluid")
-                .value
-            ) || 0;
-
-
-        if (!name) {
 
             showNotice(
-                "Please enter a food name"
+                "Last entry removed ✓"
             );
 
-            return;
 
         }
 
-
-        const food = {
-
-            id:
-                "custom-" +
-                Date.now(),
-
-            icon:
-                icon,
-
-            name:
-                name,
-
-            calories:
-                calories,
-
-            carbs:
-                carbs,
-
-            fluid:
-                fluid
-
-        };
-
-
-        state.foods.push(food);
-
-        saveState();
-
-        render();
-
-
-        document
-        .getElementById("foodForm")
-        .reset();
-
-
-        document
-        .getElementById("icon")
-        .value =
-            "🍽️";
-
-
-        showNotice(
-            name +
-            " button added ✓"
-        );
-
-    }
-);
+    );
 
 
 document
-.getElementById("reset")
-.addEventListener(
-    "click",
-    function () {
+    .getElementById("foodForm")
+    .addEventListener(
 
-        const answer =
-            confirm(
-                "Delete the race log and reset to Yard 1?"
-            );
+        "submit",
+
+        function (event) {
 
 
-        if (!answer) {
-            return;
-        }
+            event.preventDefault();
 
 
-        state =
-            freshState();
+            const name =
+                document
+                    .getElementById("name")
+                    .value
+                    .trim();
 
 
-        saveState();
-
-        render();
-
-
-        showNotice(
-            "Race reset ✓"
-        );
-
-    }
-);
+            const icon =
+                document
+                    .getElementById("icon")
+                    .value
+                    .trim() || "🍽️";
 
 
-document
-.getElementById("export")
-.addEventListener(
-    "click",
-    function () {
+            const calories =
+                Number(
 
-        const data =
-            JSON.stringify(
-                state,
-                null,
-                2
-            );
-
-
-        const blob =
-            new Blob(
-                [data],
-                {
-                    type:
-                    "application/json"
-                }
-            );
-
-
-        const link =
-            document
-            .createElement("a");
-
-
-        link.href =
-            URL.createObjectURL(blob);
-
-
-        link.download =
-            "backyard-ultra-backup.json";
-
-
-        link.click();
-
-
-        URL.revokeObjectURL(
-            link.href
-        );
-
-    }
-);
-
-
-document
-.getElementById("import")
-.addEventListener(
-    "change",
-    function (event) {
-
-        const file =
-            event.target.files[0];
-
-
-        if (!file) {
-            return;
-        }
-
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload =
-            function () {
-
-                try {
-
-                    const imported =
-                        JSON.parse(
-                            reader.result
-                        );
-
-
-                    if (
-                        !Array.isArray(
-                            imported.foods
-                        ) ||
-                        !Array.isArray(
-                            imported.entries
+                    document
+                        .getElementById(
+                            "foodCalories"
                         )
-                    ) {
+                        .value
 
-                        throw new Error(
-                            "Invalid backup"
-                        );
-
-                    }
+                ) || 0;
 
 
-                    state =
-                        imported;
+            const carbs =
+                Number(
+
+                    document
+                        .getElementById(
+                            "foodCarbs"
+                        )
+                        .value
+
+                ) || 0;
 
 
-                    saveState();
+            const fluid =
+                Number(
 
-                    render();
+                    document
+                        .getElementById(
+                            "foodFluid"
+                        )
+                        .value
+
+                ) || 0;
 
 
-                    showNotice(
-                        "Backup imported ✓"
-                    );
+            if (!name) {
 
-                }
-                catch (error) {
+                showNotice(
+                    "Enter a food name"
+                );
 
-                    showNotice(
-                        "Invalid backup file"
-                    );
+                return;
 
-                }
+            }
+
+
+            const food = {
+
+                id:
+                    "custom-" +
+                    Date.now(),
+
+                icon:
+                    icon,
+
+                name:
+                    name,
+
+                calories:
+                    Math.max(
+                        0,
+                        calories
+                    ),
+
+                carbs:
+                    Math.max(
+                        0,
+                        carbs
+                    ),
+
+                fluid:
+                    Math.max(
+                        0,
+                        fluid
+                    )
 
             };
 
 
-        reader.readAsText(file);
-
-    }
-);
-
-
-if (
-    "serviceWorker"
-    in navigator
-) {
-
-    window.addEventListener(
-        "load",
-        function () {
-
-            navigator
-            .serviceWorker
-            .register(
-                "service-worker.js"
-            )
-            .catch(
-                function (error) {
-
-                    console.log(
-                        "Service worker error:",
-                        error
-                    );
-
-                }
+            state.foods.push(
+                food
             );
 
+
+            saveState();
+
+
+            render();
+
+
+            document
+                .getElementById(
+                    "foodForm"
+                )
+                .reset();
+
+
+            document
+                .getElementById(
+                    "icon"
+                )
+                .value = "🍽️";
+
+
+            showNotice(
+
+                name +
+                " button added ✓"
+
+            );
+
+
         }
+
     );
 
-}
+
+document
+    .getElementById("reset")
+    .addEventListener(
+
+        "click",
+
+        function () {
+
+
+            const confirmed =
+                window.confirm(
+
+                    "Delete the complete race log, notes and custom foods, and return to Yard 1?"
+
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            state =
+                createFreshState();
+
+
+            selectedPortion =
+                1;
+
+
+            selectPortion(1);
+
+
+            saveState();
+
+
+            render();
+
+
+            showNotice(
+                "Race reset ✓"
+            );
+
+
+        }
+
+    );
+
+
+document
+    .getElementById("export")
+    .addEventListener(
+
+        "click",
+
+        function () {
+
+
+            const backupData =
+                JSON.stringify(
+
+                    state,
+
+                    null,
+
+                    2
+
+                );
+
+
+            const blob =
+                new Blob(
+
+                    [backupData],
+
+                    {
+
+                        type:
+                            "application/json"
+
+                    }
+
+                );
+
+
+            const link =
+                document.createElement(
+                    "a"
+                );
+
+
+            link.href =
+                URL.createObjectURL(
+                    blob
+                );
+
+
+            link.download =
+                "backyard-ultra-backup.json";
+
+
+            link.click();
+
+
+            URL.revokeObjectURL(
+                link.href
+            );
+
+
+        }
+
+    );
+
+
+document
+    .getElementById("import")
+    .addEventListener(
+
+        "change",
+
+        function (event) {
+
+
+            const file =
+                event.target.files[0];
+
+
+            if (!file) {
+
+                return;
+
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function () {
+
+
+                    try {
+
+
+                        const imported =
+                            JSON.parse(
+                                reader.result
+                            );
+
+
+                        if (
+                            !Array.isArray(
+                                imported.foods
+                            ) ||
+                            !Array.isArray(
+                                imported.entries
+                            )
+                        ) {
+
+                            throw new Error(
+                                "Invalid backup"
+                            );
+
+                        }
+
+
+                        state =
+                            imported;
+
+
+                        normaliseExistingEntries();
+
+
+                        saveState();
+
+
+                        render();
+
+
+                        showNotice(
+                            "Backup imported ✓"
+                        );
+
+
+                    }
+                    catch (error) {
+
+
+                        showNotice(
+                            "Invalid backup file"
+                        );
+
+
+                    }
+
+
+                };
+
+
+            reader.readAsText(
+                file
+            );
+
+
+            event.target.value =
+                "";
+
+
+        }
+
+    );
+
+
+normaliseExistingEntries();
+
+
+selectPortion(1);
 
 
 render();
+
+
+if (
+    "serviceWorker" in navigator
+) {
+
+
+    window.addEventListener(
+
+        "load",
+
+        function () {
+
+
+            navigator
+                .serviceWorker
+                .register(
+                    "service-worker.js"
+                )
+                .catch(
+
+                    function (error) {
+
+
+                        console.log(
+
+                            "Service worker error:",
+
+                            error
+
+                        );
+
+
+                    }
+
+                );
+
+
+        }
+
+    );
+
+
+}
+
 
 })();
 
 </script>
 
+
 </body>
+
 </html>
